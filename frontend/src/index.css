@@ -1,0 +1,170 @@
+/* design: concept=kashihon-ya lending library x Pune library-card & letterpress ephemera (index cards, book pockets, due-date hanko); palette=washi parchment #F4F1EA / library green #3F4A3A + espresso #4A403A / vermilion stamp-ink #B8432F; display=Yatra One (brush Devanagari+Latin); body=Spectral (+IBM Plex Mono for call numbers); hero=type-only library index card with vertical कथा spine sliding out of a book pocket; signature-motion=card slides out of its pocket, due-date stamps press onto chapters */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 43 33% 94%;          /* washi parchment #F4F1EA */
+    --foreground: 27 11% 15%;          /* sumi-espresso ink */
+    --card: 43 43% 97%;                /* index-card paper */
+    --card-foreground: 27 11% 15%;
+    --popover: 43 43% 97%;
+    --popover-foreground: 27 11% 15%;
+    --primary: 102 12% 26%;            /* library green #3F4A3A */
+    --primary-foreground: 43 33% 96%;
+    --secondary: 39 32% 87%;           /* tan wash */
+    --secondary-foreground: 22 12% 26%;
+    --muted: 40 28% 89%;
+    --muted-foreground: 30 12% 33%;
+    --accent: 9 59% 45%;               /* vermilion stamp-ink #B8432F */
+    --accent-foreground: 43 33% 97%;
+    --destructive: 0 70% 40%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 39 24% 78%;
+    --input: 39 24% 70%;
+    --ring: 9 59% 45%;
+    --radius: 0.25rem;
+    --espresso: 22 12% 26%;            /* #4A403A */
+    --tan: 31 20% 54%;                 /* #A38A70 */
+    --rule: 205 30% 70%;               /* index-card blue rule */
+  }
+  .dark {
+    --background: 30 11% 10%;
+    --foreground: 41 41% 90%;
+    --card: 30 12% 13%;
+    --card-foreground: 41 41% 90%;
+    --popover: 30 12% 13%;
+    --popover-foreground: 41 41% 90%;
+    --primary: 93 17% 67%;
+    --primary-foreground: 30 11% 10%;
+    --secondary: 30 12% 18%;
+    --secondary-foreground: 41 41% 90%;
+    --muted: 30 12% 16%;
+    --muted-foreground: 35 15% 69%;
+    --accent: 10 68% 62%;
+    --accent-foreground: 30 11% 10%;
+    --destructive: 0 62% 55%;
+    --destructive-foreground: 30 11% 10%;
+    --border: 30 13% 24%;
+    --input: 30 13% 30%;
+    --ring: 10 68% 62%;
+    --espresso: 35 20% 80%;
+    --tan: 31 25% 60%;
+    --rule: 205 20% 35%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    @apply bg-background text-foreground;
+    margin: 0;
+    font-family: 'Spectral', Georgia, 'Noto Serif Devanagari', serif;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    /* faint washi fibre — pure CSS, no image weight */
+    background-image:
+      radial-gradient(hsl(var(--tan) / 0.06) 1px, transparent 1px),
+      radial-gradient(hsl(var(--tan) / 0.04) 1px, transparent 1px);
+    background-size: 23px 23px, 37px 37px;
+    background-position: 0 0, 11px 17px;
+  }
+  :focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 3px; }
+  ::selection { background: hsl(var(--accent) / 0.25); }
+}
+
+@layer components {
+  .kt-display { font-family: 'Yatra One', 'Spectral', serif; font-weight: 400; letter-spacing: 0.005em; }
+  .kt-mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+
+  /* Library index card: paper, blue rules, red margin line, punched hole. */
+  .kt-card {
+    position: relative;
+    background-color: hsl(var(--card));
+    background-image: repeating-linear-gradient(
+      to bottom, transparent 0, transparent 1.95rem, hsl(var(--rule) / 0.45) 1.95rem, hsl(var(--rule) / 0.45) 2rem);
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 1px 0 hsl(var(--border)), 0 18px 40px -28px hsl(var(--espresso) / 0.45);
+  }
+  .kt-card::before {
+    content: ''; position: absolute; top: 0; bottom: 0; left: 2.25rem; width: 1px;
+    background: hsl(var(--accent) / 0.45);
+  }
+  .kt-card-plain {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+  }
+  .kt-hole {
+    position: absolute; bottom: 0.9rem; left: 50%; width: 0.9rem; height: 0.9rem; margin-left: -0.45rem;
+    border-radius: 999px; background: hsl(var(--background)); box-shadow: inset 0 1px 2px hsl(var(--espresso) / 0.35);
+  }
+
+  /* The book pocket the hero card slides out of. */
+  .kt-pocket {
+    background: hsl(var(--tan) / 0.35);
+    border: 1px solid hsl(var(--tan) / 0.6);
+    border-top: 0;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+
+  /* Hanko / due-date stamp. */
+  .kt-stamp {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; font-size: 0.72rem;
+    letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.1;
+    color: hsl(var(--accent));
+    border: 2px solid hsl(var(--accent));
+    outline: 1px solid hsl(var(--accent) / 0.55); outline-offset: 2px;
+    padding: 0.3rem 0.55rem; border-radius: 0.2rem;
+    transform: rotate(-6deg);
+    mix-blend-mode: multiply;
+  }
+  .dark .kt-stamp { mix-blend-mode: normal; }
+  .kt-stamp-round { border-radius: 999px; width: 4.25rem; height: 4.25rem; padding: 0; text-align: center; font-size: 0.62rem; }
+
+  .kt-diet {
+    display: inline-flex; width: 0.95rem; height: 0.95rem; border: 1.5px solid currentColor; border-radius: 2px;
+    align-items: center; justify-content: center; flex: none;
+  }
+  .kt-diet > span { width: 0.45rem; height: 0.45rem; border-radius: 999px; background: currentColor; }
+  .kt-veg { color: #2f7d32; }
+  .kt-egg { color: #b7791f; }
+  .kt-nonveg { color: #b3261e; }
+  .dark .kt-veg { color: #6fcf73; }
+  .dark .kt-egg { color: #f0b54a; }
+  .dark .kt-nonveg { color: #f2867f; }
+
+  /* Vertical spine label (book spine / tategaki-like orientation for Latin + Devanagari). */
+  .kt-spine { writing-mode: vertical-rl; text-orientation: mixed; }
+
+  .kt-rule { height: 1px; background: hsl(var(--border)); }
+  .kt-link { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+  .kt-link:hover { text-decoration-color: hsl(var(--accent)); }
+
+  .kt-tap { min-height: 44px; min-width: 44px; }
+}
+
+/* ── Motion (transform/opacity only; kt-v-* classes are only applied by JS when motion is welcome) ── */
+.kt-v-settle { opacity: 0; transform: translateY(18px); transition: opacity 600ms ease, transform 600ms cubic-bezier(.2,.7,.2,1); }
+.kt-v-settle.is-in { opacity: 1; transform: none; }
+
+.kt-v-slide-card { transform: translateY(42%); transition: transform 700ms cubic-bezier(.22,.8,.24,1); }
+.kt-v-slide-card.is-in { transform: none; }
+
+.kt-v-stamp .kt-stamp { opacity: 0; }
+.kt-v-stamp.is-in .kt-stamp { animation: kt-press 420ms cubic-bezier(.3,1.4,.5,1) both; animation-delay: inherit; }
+@keyframes kt-press {
+  0% { opacity: 0; transform: scale(1.6) rotate(-14deg); }
+  70% { opacity: 1; transform: scale(0.96) rotate(-5deg); }
+  100% { opacity: 1; transform: scale(1) rotate(-6deg); }
+}
+
+.kt-pageturn { transition: transform 200ms ease, box-shadow 200ms ease; }
+.kt-pageturn:hover { transform: translateY(-2px) rotate(-0.3deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .kt-v-settle, .kt-v-slide-card, .kt-v-stamp .kt-stamp { opacity: 1 !important; transform: none !important; }
+}
